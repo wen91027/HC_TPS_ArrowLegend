@@ -16,3 +16,6 @@ MonoBehaviour:
   attack: 30
   speed: 0
   cd: 2.5
+  stopDistance: 100
+  attackRange: 1.8
+  attackDelay: 0.8
