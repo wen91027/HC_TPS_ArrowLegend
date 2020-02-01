@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 6608321128108344820}
   m_Layer: 0
   m_Name: "\u98DB\u9F8D"
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -164,8 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 2f71f72a0c0ccc840820af9a2d154cd5, type: 2}
-  agent: {fileID: 0}
-  player: {fileID: 0}
+  bullet: {fileID: 0}
 --- !u!195 &6608321128108344820
 NavMeshAgent:
   m_ObjectHideFlags: 0

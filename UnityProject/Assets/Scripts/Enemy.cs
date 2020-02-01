@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
@@ -11,14 +12,20 @@ public class Enemy : MonoBehaviour
     protected Animator ani;             // 動畫控制器
     protected float timer;              // 計時器
 
+    private HpBarControl hpControl;     // 血條控制器
+    private float hp;
+
     private void Start()
     {
         // 先取得元件
         ani = GetComponent<Animator>();             
         agent = GetComponent<NavMeshAgent>();
         agent.speed = data.speed;
+        hp = data.hpMax;
         player = GameObject.Find("玩家").transform;
         agent.SetDestination(player.position);
+        hpControl = transform.Find("血條系統").GetComponent<HpBarControl>();
+        hpControl.UpdateHpBar(data.hpMax, hp);
     }
 
     private void Update()
@@ -69,13 +76,27 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Hit()
+    public void Hit(float damage)
     {
-
+        hp -= damage;                              // 血量 扣除 傷害值
+        hp = Mathf.Clamp(hp, 0, 10000);       // 血量 夾在 0 - 10000
+        hpControl.UpdateHpBar(data.hpMax, hp);     // 血量控制系統.更新血條(目前血量，最大血量)
+        if (hp == 0) Dead();                       // 如果 血量 為 0 呼叫死亡方法
+        StartCoroutine(hpControl.ShowDamage(damage));   // 血量控制器.顯示傷害值
     }
 
     private void Dead()
     {
-
+        if (ani.GetBool("死亡動畫")) return;                 // 如果死亡動畫為勾選就跳出
+        ani.SetBool("死亡動畫", true);                       // 播放死亡動畫 SetBool("參數名稱", 布林值)
+        this.enabled = false;
+        Destroy(gameObject,1.5f);
     }
+
+
+
+     
+
+        
+
 }

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - "\u50B3\u9001\u5340\u57DF"
+  - PlayerEyes
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -8,7 +8,8 @@ public class HpBarControl : MonoBehaviour
     private Text textHp;
     private Text textDamage;
 
-    private void Start()
+    //Awake 喚醒: 在Start之前
+    private void Awake() 
     {
         imgHp = transform.GetChild(1).GetComponent<Image>();
         textHp = transform.GetChild(2).GetComponent<Text>();
