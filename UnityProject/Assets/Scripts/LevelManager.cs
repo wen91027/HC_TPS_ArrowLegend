@@ -62,6 +62,9 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 復活畫面倒數方法
+    /// </summary>
     public IEnumerator CountDownRevival()
     {
         panelRevival.alpha = 1;                             // 顯示復活畫面
@@ -74,7 +77,18 @@ public class LevelManager : MonoBehaviour
             yield return new WaitForSeconds(1);             // 等待一秒
         }
 
-        panelRevival.alpha = 0;                             // 顯示復活畫面
+        panelRevival.alpha = 0;                             // 隱藏復活畫面
+        panelRevival.interactable = false;                  // 不可互動
+        panelRevival.blocksRaycasts = false;                // 不阻擋射線
+    }
+
+    /// <summary>
+    /// 關閉復活畫面
+    /// </summary>
+    public void CloseRevival()
+    {
+        StopCoroutine(CountDownRevival());
+        panelRevival.alpha = 0;                             // 隱藏復活畫面
         panelRevival.interactable = false;                  // 不可互動
         panelRevival.blocksRaycasts = false;                // 不阻擋射線
     }
