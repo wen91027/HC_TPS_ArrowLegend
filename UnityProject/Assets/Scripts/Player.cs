@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
@@ -16,6 +18,14 @@ public class Player : MonoBehaviour
     private HpBarControl hpControl;     // 血條控制器
     #endregion
 
+    public Enemy[] enemysArray;
+    public List<Enemy> enemys;
+    public List<float> enemysDistance;
+
+    public Transform targetEnemy;
+
+    private bool caculate;
+
     #region 事件
     private void Start()
     {
@@ -26,6 +36,8 @@ public class Player : MonoBehaviour
         joy = GameObject.Find("虛擬搖桿").GetComponent<Joystick>();
         levelManager = FindObjectOfType<LevelManager>();                          // 透過類型尋找物件
         hpControl = transform.Find("血條系統").GetComponent<HpBarControl>();        // 變形.尋找("子物件")
+        enemysArray = FindObjectsOfType<Enemy>();
+        enemys = enemysArray.ToList();
     }
 
     // 固定更新：固定一秒 50 次 - 物理行為
@@ -77,6 +89,30 @@ public class Player : MonoBehaviour
         // 垂直 1、-1
         // 動畫控制器.設定布林值(參數名稱，布林值)
         ani.SetBool("跑步開關", h != 0 || v != 0);
+
+        if (h == 0 && v == 0) Idle();
+        else caculate = true;
+    }
+
+    private void Idle()
+    {
+        if (caculate)
+        {
+            enemysDistance.Clear();
+
+            caculate = false;
+            ani.SetBool("跑步開關", false);
+
+            for (int i = 0; i < enemys.Count; i++)
+            {
+                float dis = Vector3.Distance(transform.position, enemys[i].transform.position);
+                enemysDistance.Add(dis);
+            }
+
+            int index = enemysDistance.IndexOf(enemysDistance.Min());
+
+            targetEnemy = enemys[index].transform;
+        }
     }
 
     private void Attack()
@@ -106,6 +142,14 @@ public class Player : MonoBehaviour
         ani.SetBool("死亡動畫", true);                       // 播放死亡動畫 SetBool("參數名稱", 布林值)
         this.enabled = false;                               // this 此類別 - enabled 是否啟動
         StartCoroutine(levelManager.CountDownRevival());    // 啟動協程
+    }
+
+    public void Revival()
+    {
+        data.hp = data.hpMax;
+        hpControl.UpdateHpBar(data.hpMax, data.hp);
+        ani.SetBool("死亡動畫", false);
+        this.enabled = true;
     }
     #endregion
 }
