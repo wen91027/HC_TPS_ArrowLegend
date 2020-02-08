@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
 {
     [Header("敵人資料")]
     public EnemyData data;              // 敵人資料
+    public GameObject coin;     //金幣
 
     protected NavMeshAgent agent;       // 導覽代理器
     protected Transform player;         // 玩家變形
@@ -89,10 +90,19 @@ public class Enemy : MonoBehaviour
     {
         if (ani.GetBool("死亡動畫")) return;                 // 如果死亡動畫為勾選就跳出
         ani.SetBool("死亡動畫", true);                       // 播放死亡動畫 SetBool("參數名稱", 布林值)
+        CreateCoin();
         this.enabled = false;
         Destroy(gameObject,1.5f);
     }
 
+    private void CreateCoin()
+    {
+        int r = (int)Random.Range(data.coinRange.x, data.coinRange.y);
+        for (int i = 0; i < r; i++)
+        {
+            Instantiate(coin, transform.position + transform.up * 1, Quaternion.identity);
+        }
+    }
 
 
      

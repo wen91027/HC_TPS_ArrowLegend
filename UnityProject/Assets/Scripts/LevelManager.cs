@@ -11,22 +11,50 @@ public class LevelManager : MonoBehaviour
     public bool autoOpenDoor;
     [Header("隨機技能介面")]
     public GameObject randomSkill;
+    [Header("是否為魔王關")]
+    public bool isboss;
 
     private Animator door;              // 門
     private Image cross;                // 轉場畫面
     private CanvasGroup panelRevival;   // 復活畫面
     private Text textCountRevival;      // 復活倒數秒數
+    private GameObject panelResult;
+    private AdsManager adManager;
 
     private void Start()
     {
         door = GameObject.Find("門").GetComponent<Animator>();
         cross = GameObject.Find("轉場畫面").GetComponent<Image>();
+
+        adManager = FindObjectOfType<AdsManager>();
         panelRevival = GameObject.Find("復活畫面").GetComponent<CanvasGroup>();
         textCountRevival = panelRevival.transform.Find("倒數秒數").GetComponent<Text>();
+        panelRevival.transform.Find("看廣告復活").GetComponent<Button>().onClick.AddListener(adManager.ShowAD);
+
+        panelResult = GameObject.Find("結算畫面");
+        panelResult.GetComponent<Button>().onClick.AddListener(BackToMenu);
 
         if (autoOpenDoor) Invoke("OpenDoor", 6);    // 延遲調用("方法名稱"，延遲時間)
         if (showRandomSkill) ShowRandomSkill();
     }
+
+
+    private void BackToMenu()
+    {
+        SceneManager.LoadScene("選單畫面");
+    }
+
+
+    public void ShowResult()
+    {
+        panelResult.GetComponent<CanvasGroup>().alpha = 1;
+        panelResult.GetComponent<CanvasGroup>().interactable = true;
+        panelResult.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        panelResult.GetComponent<Animator>().SetTrigger("結算畫面觸發");
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+        panelResult.transform.Find("關卡名稱").GetComponent<Text>().text = "Lv : " + currentLevel.ToString();
+    }
+
 
     /// <summary>
     /// 顯示隨機技能介面
@@ -49,7 +77,9 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private IEnumerator LoadLevel()
     {
-        AsyncOperation ao = SceneManager.LoadSceneAsync("關卡2");       // 載入場景資訊 = 載入場景("場景名稱")
+
+        int sceneIndex = SceneManager.GetActiveScene().buildIndex;       //抓當前索引值
+        AsyncOperation ao = SceneManager.LoadSceneAsync(++sceneIndex);   // 載入場景資訊 = 載入場景("場景名稱")
         ao.allowSceneActivation = false;                                // 載入場景資訊.是否允許切換 = 否
 
         while (!ao.isDone)                                              // 當(載入場景資訊.是否完成 為 否)
@@ -80,6 +110,11 @@ public class LevelManager : MonoBehaviour
         panelRevival.alpha = 0;                             // 隱藏復活畫面
         panelRevival.interactable = false;                  // 不可互動
         panelRevival.blocksRaycasts = false;                // 不阻擋射線
+
+        if (!AdsManager.lookAD)
+        {
+            SceneManager.LoadScene("選單畫面");    //倒數完回到選單
+        }
     }
 
     /// <summary>
@@ -92,4 +127,12 @@ public class LevelManager : MonoBehaviour
         panelRevival.interactable = false;                  // 不可互動
         panelRevival.blocksRaycasts = false;                // 不阻擋射線
     }
+
+    public void PassLevel()
+    {
+        OpenDoor();
+
+
+    }
+
 }

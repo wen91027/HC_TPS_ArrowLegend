@@ -9,6 +9,8 @@ public class AdsManager : MonoBehaviour, IUnityAdsListener
     private string placemnetRevival = "revival";    // 廣告類型：復活
     private Player player;                          // 玩家腳本
 
+    public static bool lookAD;    //判斷看廣告
+
     private void Start()
     {
         Advertisement.AddListener(this);                // 廣告.添加監聽腳本(此腳本);
@@ -23,6 +25,7 @@ public class AdsManager : MonoBehaviour, IUnityAdsListener
     {
         if (Advertisement.IsReady(placemnetRevival))    // 如果 廣告.是否準備完成(廣告 ID)
         {
+            lookAD = true;
             Advertisement.Show(placemnetRevival);       // 廣告.顯示(廣告 ID)
         }
     }
@@ -56,6 +59,7 @@ public class AdsManager : MonoBehaviour, IUnityAdsListener
                     break;
                 case ShowResult.Finished:       // 狀況 3 失敗：
                     print("廣告成功");
+                    lookAD = false;
                     player.Revival();           // 玩家.復活
                     break;
             }

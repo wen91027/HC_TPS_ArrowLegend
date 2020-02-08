@@ -59,7 +59,16 @@ public class Player : MonoBehaviour
     {
         if (other.tag == "傳送區域")
         {
-            levelManager.StartCoroutine("LoadLevel");
+            if (levelManager.isboss)
+            {
+                levelManager.ShowResult();
+            }
+            else
+            {
+                levelManager.StartCoroutine("LoadLevel");
+            }
+
+            
         }
     }
     #endregion
@@ -106,11 +115,18 @@ public class Player : MonoBehaviour
         else
         {
             timer = 0;                      // 歸零
-            ani.SetTrigger("攻擊觸發");     // 播放攻擊動畫 SetTrigger("參數名稱")
 
             // 1. 取得所有敵人
             enemys.Clear();                                                                     // 清除清單 (刪除清單內容)
             enemys = FindObjectsOfType<Enemy>().ToList();                                       // 透過類型尋找複數物件 (傳回陣列)    // ToList 將陣列轉換為清單 List
+
+            //無怪物,判定過關
+            if (enemys.Count == 0)
+            {
+                levelManager.PassLevel();
+                return;
+            }
+
 
             // 2. 取得所有敵人距離
             // 陣列數量：Length
@@ -133,12 +149,15 @@ public class Player : MonoBehaviour
             transform.LookAt(enemyTarget);
 
             //發射子彈
+            ani.SetTrigger("攻擊觸發");     // 播放攻擊動畫 SetTrigger("參數名稱")
             GameObject bullet = Instantiate(knife, firePoint.position, firePoint.rotation);     // 生成(子彈，座標，角度)
             bullet.GetComponent<Rigidbody>().AddForce(transform.forward * data.bulletPower);    // 取得子彈剛體並添加推力
             bullet.AddComponent<Bullet>();
             bullet.GetComponent<Bullet>().damage = data.attack;
             bullet.GetComponent<Bullet>().players = true;
 
+
+            
         }
     }
 
