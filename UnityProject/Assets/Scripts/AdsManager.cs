@@ -60,7 +60,7 @@ public class AdsManager : MonoBehaviour, IUnityAdsListener
                 case ShowResult.Finished:       // 狀況 3 失敗：
                     print("廣告成功");
                     lookAD = false;
-                    player.Revival();           // 玩家.復活
+                    GameObject.Find("玩家").GetComponent<Player>().Revival();  // 玩家復活
                     break;
             }
         }
